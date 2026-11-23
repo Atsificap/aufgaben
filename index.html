@@ -75,6 +75,38 @@
   --btn-border: 1px solid rgba(62, 230, 255, .55);
 }
 
+/* Notizbuch: kariertes Papier, Kuli und Textmarker */
+[data-theme="notiz"] {
+  --bg: #fbf8ef;
+  --bg-img: linear-gradient(rgba(120,150,190,.22) 1px, transparent 1px), linear-gradient(90deg, rgba(120,150,190,.22) 1px, transparent 1px);
+  --panel: #fffef9;
+  --panel-border: 1px solid #e6e0cf;
+  --panel-shadow: 0 1px 2px rgba(60,50,30,.10), 0 4px 10px rgba(60,50,30,.06);
+  --text: #26324d;
+  --muted: #7d8497;
+  --accent: #2f5bb7;
+  --accent-text: #ffffff;
+  --overdue: #d2423a;
+  --line: #d3deee;
+  --check-border: #26324d;
+  --check-bg: transparent;
+  --input-bg: transparent;
+  --input-border: #b9c3d6;
+  --font: "Noteworthy", "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
+  --font-head: "Noteworthy", "Marker Felt", "Segoe Print", "Comic Sans MS", cursive;
+  --head-weight: 700;
+  --head-style: normal;
+  --head-transform: none;
+  --head-color: #26324d;
+  --head-shadow: none;
+  --radius: 6px;
+  --btn-bg: transparent;
+  --btn-text: #2f5bb7;
+  --btn-border: 1.5px solid #2f5bb7;
+  --marker: rgba(255, 222, 60, .75);
+  --marker-red: rgba(255, 120, 110, .5);
+}
+
 /* ---------- Basis ---------- */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
@@ -146,8 +178,8 @@ input:focus { border-color: var(--accent); }
 .btn[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 /* Liste */
-ul#list, ul#archiveList { list-style: none; margin: 0; padding: 0; }
-ul#list:empty, ul#archiveList:empty { display: none; }
+ul#list, ul#archiveList, ul#dayList { list-style: none; margin: 0; padding: 0; }
+ul#list:empty, ul#archiveList:empty, ul#dayList:empty { display: none; }
 li.task { position: relative; overflow: hidden; border-top: 1px solid var(--line); }
 li.task .row {
   position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px;
@@ -163,6 +195,7 @@ li.task .row {
 li.task.dragging .row, li.task.dragging .swipe-del { transition: none; }
 :root, [data-theme="ruhig"] { --row-bg: #fffdf8; }
 [data-theme="neon"] { --row-bg: #1e0b37; }
+[data-theme="notiz"] { --row-bg: transparent; }
 [data-theme="neon"] .swipe-del { background: #ff3d8b; box-shadow: inset 0 0 14px rgba(255,255,255,.25); }
 ul.panel { overflow: hidden; }
 li.task:first-child { border-top: none; }
@@ -193,6 +226,15 @@ dialog {
   border-radius: var(--radius); box-shadow: var(--panel-shadow), 0 10px 40px rgba(0,0,0,.4);
   width: min(92vw, 480px); padding: 16px; box-sizing: border-box;
 }
+dialog { position: fixed; }
+.x-btn {
+  position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--btn-bg); border: var(--btn-border);
+  color: var(--btn-text); cursor: pointer; padding: 0;
+}
+.x-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.x-btn:active { transform: scale(.94); }
+dialog h2 { padding-right: 44px; }
 dialog::backdrop { background: rgba(0,0,0,.45); }
 dialog h2 { margin: 0 0 12px; font-family: var(--font-head); font-size: 20px; color: var(--head-color); font-style: var(--head-style); text-transform: var(--head-transform); }
 dialog .stack { display: grid; gap: 10px; }
@@ -234,7 +276,7 @@ header { gap: 6px; }
 }
 .menu-item:active { background: var(--line); }
 .menu-label { font-size: 13px; color: var(--muted); padding: 10px 10px 4px; border-top: 1px solid var(--line); margin-top: 4px; }
-.seg { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; padding: 0 4px 4px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 0 4px 4px; }
 .seg button {
   background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text);
   border-radius: calc(var(--radius) - 4px); padding: 8px 2px; font-size: 13px; min-height: 40px; cursor: pointer;
@@ -242,6 +284,98 @@ header { gap: 6px; }
 .seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 
 .btn.back { margin-bottom: 4px; }
+#backupBtn { position: relative; }
+#backupBtn.needs::after {
+  content: ""; position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--overdue); box-shadow: 0 0 0 2px var(--bg);
+}
+[data-theme="neon"] #backupBtn.needs::after { box-shadow: 0 0 8px var(--overdue); }
+.menu-info { font-size: 13px; color: var(--muted); padding: 0 10px 4px; }
+
+/* ---------- Umschalter Liste / Kalender ---------- */
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0 0 12px; }
+.tabs button {
+  background: none; border: none; color: var(--muted); border-radius: calc(var(--radius) - 5px);
+  padding: 7px 4px; min-height: 36px; font-size: 15px; cursor: pointer;
+}
+.tabs button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+[data-theme="neon"] .tabs button[aria-pressed="true"] { box-shadow: 0 0 10px rgba(255,79,163,.6); text-transform: uppercase; font-style: italic; letter-spacing: .04em; }
+
+/* ---------- Verschieben (Aufgaben ohne Datum) ---------- */
+.handle {
+  flex: none; width: 34px; height: 34px; margin-right: -8px; display: grid; place-items: center;
+  background: none; border: none; color: var(--muted); cursor: grab; padding: 0; touch-action: none;
+}
+.handle svg { width: 18px; height: 18px; fill: currentColor; }
+li.task.lifting { z-index: 5; overflow: visible; box-shadow: 0 6px 18px rgba(0,0,0,.22); border-radius: calc(var(--radius) - 4px); }
+li.task.lifting .row { border-radius: calc(var(--radius) - 4px); }
+[data-theme="neon"] li.task.lifting { box-shadow: 0 0 16px rgba(255,79,163,.6); }
+
+/* ---------- Kalender ---------- */
+.cal { padding: 8px 6px 6px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; padding: 0 2px 6px; }
+.cal-head .month { font-family: var(--font-head); font-size: 19px; font-weight: 600; color: var(--head-color); font-style: var(--head-style); text-transform: var(--head-transform); cursor: pointer; background: none; border: none; padding: 6px 8px; }
+[data-theme="neon"] .cal-head .month { text-shadow: 0 0 6px #ff4fa3; }
+.cal-head .nav { width: 40px; height: 40px; border: none; background: none; color: var(--accent); font-size: 26px; line-height: 1; cursor: pointer; border-radius: 50%; }
+[data-theme="neon"] .cal-head .nav { color: #8ff3ff; }
+.cal-wd, .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.cal-wd span { text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); padding-bottom: 4px; }
+.cal-grid { touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+.cal-day {
+  min-height: 62px; padding: 2px 1px 3px; border: none; background: none; color: var(--text);
+  display: flex; flex-direction: column; align-items: stretch; gap: 2px; cursor: pointer;
+  border-radius: calc(var(--radius) - 6px); text-align: center; min-width: 0;
+}
+.cal-day .num { align-self: center; width: 26px; height: 26px; line-height: 26px; border-radius: 50%; font-size: 14px; }
+.cal-day.other { opacity: .38; }
+.cal-day.today .num { background: var(--accent); color: var(--accent-text); font-weight: 700; }
+[data-theme="neon"] .cal-day.today .num { box-shadow: 0 0 10px var(--accent); }
+.cal-day.sel { background: var(--line); }
+[data-theme="neon"] .cal-day.sel { box-shadow: inset 0 0 0 1px rgba(62,230,255,.55); }
+.pill {
+  display: block; font-size: 10px; line-height: 15px; height: 15px; padding: 0 3px; border-radius: 4px;
+  background: var(--accent); color: var(--accent-text); white-space: nowrap; overflow: hidden; text-align: left;
+}
+.pill.overdue { background: var(--overdue); }
+.pill.done { opacity: .45; text-decoration: line-through; }
+.pill.more { background: none; color: var(--muted); text-align: center; padding: 0; }
+[data-theme="neon"] .pill:not(.more) { box-shadow: 0 0 6px rgba(255,79,163,.55); }
+.day-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 16px 4px 6px; }
+.day-title span { font-size: 15px; color: var(--muted); }
+.day-title .btn { min-height: 36px; padding: 6px 12px; font-size: 15px; }
+/* ---------- Notizbuch-Details ---------- */
+[data-theme="notiz"] body { background-size: 22px 22px; background-position: -1px -1px; }
+[data-theme="notiz"] h1 {
+  text-decoration: underline wavy #f0b400; text-decoration-thickness: 2px; text-underline-offset: 7px;
+  transform: rotate(-1.5deg); transform-origin: left center;
+}
+/* Liste wie ein Heftblatt: blaue Linien, roter Rand */
+[data-theme="notiz"] li.task {
+  background: linear-gradient(90deg, transparent 38.5px, rgba(210,66,58,.45) 38.5px, rgba(210,66,58,.45) 40px, transparent 40px), #fffef9;
+  border-top-color: var(--line);
+}
+[data-theme="notiz"] .check { border-radius: 4px; border-width: 2px; transform: rotate(-3deg); }
+[data-theme="notiz"] li.done .check { background: transparent; border-color: var(--text); color: var(--accent); font-size: 20px; font-weight: 700; }
+[data-theme="notiz"] li.done .text { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+[data-theme="notiz"] .swipe-del { background: #d2423a; }
+[data-theme="notiz"] input[type="text"], [data-theme="notiz"] input[type="date"] {
+  border: none; border-bottom: 2px solid var(--input-border); border-radius: 0; padding-left: 4px;
+}
+[data-theme="notiz"] input:focus { border-color: var(--accent); }
+[data-theme="notiz"] .btn.primary { background: var(--marker); color: var(--text); border: none; box-shadow: none; }
+[data-theme="notiz"] .btn.danger { color: var(--overdue); border-color: var(--overdue); }
+[data-theme="notiz"] .icon-btn.add { box-shadow: 1px 2px 0 rgba(38,50,77,.25); }
+[data-theme="notiz"] .tabs button[aria-pressed="true"] { background: var(--marker); color: var(--text); }
+[data-theme="notiz"] .seg button[aria-pressed="true"] { background: var(--marker); border-color: #e2c230; color: var(--text); }
+[data-theme="notiz"] .toast { background: var(--text); }
+/* Kalender: heute mit Textmarker, Einträge als Marker-Striche */
+[data-theme="notiz"] .cal-day.today .num { background: var(--marker); color: var(--text); border-radius: 40% 55% 45% 60%; transform: rotate(-4deg); }
+[data-theme="notiz"] .cal-day.sel { background: rgba(47,91,183,.08); box-shadow: inset 0 0 0 1.5px rgba(47,91,183,.5); }
+[data-theme="notiz"] .pill { background: var(--marker); color: var(--text); border-radius: 2px 6px 3px 5px; font-weight: 700; }
+[data-theme="notiz"] .pill.overdue { background: var(--marker-red); }
+[data-theme="notiz"] .pill.more { background: none; color: var(--muted); }
+[data-theme="notiz"] .cal-head .month { text-decoration: underline wavy #f0b400; text-underline-offset: 5px; }
+
 dialog .hint { font-size: 15px; color: var(--muted); margin: 0 0 6px; }
 dialog form#add { padding: 0; display: block; }
 </style>
@@ -251,8 +385,8 @@ dialog form#add { padding: 0; display: block; }
   <header>
     <div class="deco" aria-hidden="true"></div>
     <h1 id="title">Aufgaben</h1>
-    <button class="icon-btn" id="backupBtn" type="button" aria-label="Sicherung">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10m0 0-4-4m4 4 4-4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+    <button class="icon-btn" id="backupBtn" type="button" aria-label="Jetzt sichern">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0-4 4m4-4 4 4"/><path d="M8 10H6.5A1.5 1.5 0 0 0 5 11.5v8A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-8a1.5 1.5 0 0 0-1.5-1.5H16"/></svg>
     </button>
     <button class="icon-btn" id="menuBtn" type="button" aria-label="Menü" aria-haspopup="true" aria-expanded="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
@@ -264,17 +398,46 @@ dialog form#add { padding: 0; display: block; }
     <div class="menu panel" id="menu" role="menu" hidden>
       <button class="menu-item" id="toggleDone" type="button" role="menuitem">Erledigte ausblenden</button>
       <button class="menu-item" id="openArchive" type="button" role="menuitem">Archiv</button>
+      <div class="menu-label">Sicherung</div>
+      <div class="menu-info" id="backupInfo"></div>
+      <button class="menu-item" id="importBtn" type="button" role="menuitem">Sicherung importieren …</button>
       <div class="menu-label">Design</div>
       <div class="seg" id="themeChoice">
         <button type="button" data-choice="ruhig">Ruhig</button>
         <button type="button" data-choice="neon">Neon</button>
+        <button type="button" data-choice="notiz">Notizbuch</button>
       </div>
     </div>
   </header>
 
   <section id="mainView">
-    <ul id="list" class="panel"></ul>
-    <p class="empty" id="empty" hidden></p>
+    <div class="tabs panel" id="viewTabs">
+      <button type="button" data-view="list">Liste</button>
+      <button type="button" data-view="cal">Kalender</button>
+    </div>
+
+    <div id="listView">
+      <ul id="list" class="panel"></ul>
+      <p class="empty" id="empty" hidden></p>
+    </div>
+
+    <div id="calView" hidden>
+      <div class="cal panel">
+        <div class="cal-head">
+          <button class="nav" id="calPrev" type="button" aria-label="Voriger Monat">‹</button>
+          <button class="month" id="calMonth" type="button" aria-label="Zu heute springen"></button>
+          <button class="nav" id="calNext" type="button" aria-label="Nächster Monat">›</button>
+        </div>
+        <div class="cal-wd" aria-hidden="true"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="day-title">
+        <span id="dayLabel"></span>
+        <button class="btn" id="dayAdd" type="button">+ Aufgabe</button>
+      </div>
+      <ul id="dayList" class="panel"></ul>
+      <p class="empty" id="dayEmpty" hidden>Keine Aufgaben an diesem Tag.</p>
+    </div>
   </section>
 
   <section id="archiveView" hidden>
@@ -287,6 +450,7 @@ dialog form#add { padding: 0; display: block; }
 
 <dialog id="addDialog">
   <form id="add" autocomplete="off">
+    <button class="x-btn" id="addCancel" type="button" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <h2>Neue Aufgabe</h2>
     <div class="stack">
       <input id="newText" type="text" placeholder="Was ist zu tun?" enterkeyhint="done" maxlength="500">
@@ -297,26 +461,16 @@ dialog form#add { padding: 0; display: block; }
     </div>
     <div class="actions">
       <span class="spacer"></span>
-      <button class="btn" id="addCancel" type="button">Abbrechen</button>
       <button class="btn primary" type="submit">Hinzufügen</button>
     </div>
   </form>
 </dialog>
 
-<dialog id="backupDialog">
-  <h2>Sicherung</h2>
-  <p class="hint">Deine Aufgaben liegen nur auf diesem Gerät. Sichere sie ab und zu als Datei, z. B. in der Dateien-App.</p>
-  <div class="actions">
-    <button class="btn" id="exportBtn" type="button">Exportieren</button>
-    <button class="btn" id="importBtn" type="button">Importieren</button>
-    <span class="spacer"></span>
-    <button class="btn" id="backupClose" type="button">Schließen</button>
-    <input id="importFile" type="file" accept="application/json,.json" hidden>
-  </div>
-</dialog>
+<input id="importFile" type="file" accept="application/json,.json" hidden>
 
 <dialog id="editDialog">
   <form method="dialog" id="editForm">
+    <button class="x-btn" id="editClose" type="button" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <h2>Aufgabe bearbeiten</h2>
     <div class="stack">
       <input id="editText" type="text" maxlength="500" required>
@@ -329,7 +483,6 @@ dialog form#add { padding: 0; display: block; }
     <div class="actions">
       <button class="btn danger" id="deleteBtn" type="button">Löschen</button>
       <span class="spacer"></span>
-      <button class="btn" value="cancel" type="submit" formnovalidate>Abbrechen</button>
       <button class="btn primary" value="save" type="submit">Speichern</button>
     </div>
   </form>
@@ -344,8 +497,8 @@ dialog form#add { padding: 0; display: block; }
   var SETTINGS_KEY = "aufgaben.settings.v1";
   var DAY = 864e5;
   var WEEK = 7 * DAY;
-  var THEME_COLORS = { ruhig: "#f4f1ea", neon: "#160828" };
-  var THEME_TITLES = { ruhig: "Aufgaben", neon: "To-Do" };
+  var THEME_COLORS = { ruhig: "#f4f1ea", neon: "#160828", notiz: "#fbf8ef" };
+  var THEME_TITLES = { ruhig: "Aufgaben", neon: "To-Do", notiz: "Merkzettel" };
 
   // ---------- Speicher ----------
   function readJSON(key, fallback) {
@@ -354,12 +507,15 @@ dialog form#add { padding: 0; display: block; }
   }
   var tasks = readJSON(DATA_KEY, []);
   if (!Array.isArray(tasks)) tasks = [];
-  var settings = Object.assign({ theme: "ruhig", hideDone: false }, readJSON(SETTINGS_KEY, {}));
+  // Reihenfolge für Aufgaben ohne Datum (bisherige Reihenfolge = nach Erstellung)
+  tasks.forEach(function (t) { if (!isFinite(t.order)) t.order = Number(t.createdAt) || 0; });
+  var settings = Object.assign({ theme: "ruhig", hideDone: false, view: "list" }, readJSON(SETTINGS_KEY, {}));
   if (settings.theme === "festung" || settings.theme === "helden") settings.theme = "ruhig";
 
   function saveTasks() {
     try { localStorage.setItem(DATA_KEY, JSON.stringify(tasks)); }
     catch (e) { toast("Speichern fehlgeschlagen. Bitte exportieren!"); }
+    settings.lastChangeAt = Date.now(); saveSettings();
   }
   function saveSettings() {
     try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {}
@@ -397,11 +553,18 @@ dialog form#add { padding: 0; display: block; }
   }
 
   // ---------- Sortierung ----------
+  // Ohne Datum zuerst (in selbst gewählter Reihenfolge), danach nach Datum
   function compareOpen(a, b) {
-    var da = a.due ? parseDay(a.due).getTime() : Infinity;
-    var db = b.due ? parseDay(b.due).getTime() : Infinity;
-    if (da !== db) return da - db;
+    if (!a.due && !b.due) return (a.order - b.order) || (a.createdAt - b.createdAt);
+    if (!a.due) return -1;
+    if (!b.due) return 1;
+    if (a.due !== b.due) return a.due < b.due ? -1 : 1;
     return a.createdAt - b.createdAt;
+  }
+  function topOrder() {
+    var m = Infinity;
+    tasks.forEach(function (t) { if (!t.due && !t.done && t.order < m) m = t.order; });
+    return m === Infinity ? 0 : m - 1;
   }
   function compareDone(a, b) { return (b.doneAt || 0) - (a.doneAt || 0); }
 
@@ -410,7 +573,7 @@ dialog form#add { padding: 0; display: block; }
   var listEl = $("list"), emptyEl = $("empty");
   var archiveListEl = $("archiveList"), archiveEmptyEl = $("archiveEmpty");
 
-  function taskItem(t) {
+  function taskItem(t, opts) {
     var li = document.createElement("li");
     li.className = "task" + (t.done ? " done" : "") + (isOverdue(t) ? " overdue" : "");
     var check = document.createElement("button");
@@ -432,8 +595,51 @@ dialog form#add { padding: 0; display: block; }
     del.type = "button"; del.className = "swipe-del"; del.textContent = "Löschen"; del.tabIndex = -1;
     del.addEventListener("click", function () { removeTask(t.id); });
     li.appendChild(del); li.appendChild(row);
+    li.dataset.id = t.id;
     attachSwipe(row);
+    if (opts && opts.draggable) {
+      li.classList.add("undated");
+      var h = document.createElement("button");
+      h.type = "button"; h.className = "handle"; h.setAttribute("aria-label", "Verschieben");
+      h.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>';
+      row.appendChild(h);
+      attachDrag(h, li);
+    }
     return li;
+  }
+
+  // ---------- Verschieben per Griff ----------
+  var dragActive = false;
+  function attachDrag(handle, li) {
+    handle.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault(); e.stopPropagation();
+      closeOpenRow();
+      var pid = e.pointerId, startY = e.clientY, ul = li.parentNode;
+      try { handle.setPointerCapture(pid); } catch (err) {}
+      dragActive = true; li.classList.add("lifting");
+      function sibs() { return Array.prototype.slice.call(ul.querySelectorAll("li.task.undated")); }
+      function move(ev) {
+        if (ev.pointerId !== pid) return;
+        var dy = ev.clientY - startY, s = sibs(), i = s.indexOf(li), prev = s[i - 1], next = s[i + 1];
+        if (next && dy > next.offsetHeight / 2) { ul.insertBefore(next, li); startY += next.offsetHeight; }
+        else if (prev && dy < -prev.offsetHeight / 2) { ul.insertBefore(li, prev); startY -= prev.offsetHeight; }
+        li.style.transform = "translateY(" + (ev.clientY - startY) + "px)";
+      }
+      function up(ev) {
+        if (ev.pointerId !== pid) return;
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", up);
+        handle.removeEventListener("pointercancel", up);
+        li.classList.remove("lifting"); li.style.transform = "";
+        sibs().forEach(function (el, i) { var t = find(el.dataset.id); if (t) t.order = i; });
+        dragActive = false;
+        saveTasks(); render();
+      }
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", up);
+      handle.addEventListener("pointercancel", up);
+    });
   }
 
   // ---------- Wischen zum Löschen ----------
@@ -505,13 +711,23 @@ dialog form#add { padding: 0; display: block; }
   }
 
   function render() {
+    if (dragActive) return;
     openRow = null;
     var active = tasks.filter(function (t) { return !isArchived(t); });
     var open = active.filter(function (t) { return !t.done; }).sort(compareOpen);
     var done = active.filter(function (t) { return t.done; }).sort(compareDone);
     var shown = settings.hideDone ? open : open.concat(done);
+    var undatedCount = open.filter(function (t) { return !t.due; }).length;
 
-    listEl.replaceChildren.apply(listEl, shown.map(taskItem));
+    listEl.replaceChildren.apply(listEl, shown.map(function (t) {
+      return taskItem(t, { draggable: !t.done && !t.due && undatedCount > 1 });
+    }));
+    renderCalendar();
+    var isCal = settings.view === "cal";
+    $("listView").hidden = isCal; $("calView").hidden = !isCal;
+    Array.prototype.forEach.call(document.querySelectorAll("#viewTabs button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.view === settings.view));
+    });
     if (shown.length === 0) {
       emptyEl.hidden = false;
       emptyEl.textContent = tasks.length === 0 ? "Noch keine Aufgaben. Tippe oben rechts auf +."
@@ -524,10 +740,108 @@ dialog form#add { padding: 0; display: block; }
     $("openArchive").textContent = "Archiv" + (archived.length ? " (" + archived.length + ")" : "");
 
 
+    updateBackupUI();
     var tb = $("toggleDone");
     tb.setAttribute("aria-pressed", String(settings.hideDone));
     tb.textContent = settings.hideDone ? "Erledigte anzeigen" + (done.length ? " (" + done.length + ")" : "") : "Erledigte ausblenden";
   }
+
+  // ---------- Kalender ----------
+  function isoOf(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  var now0 = new Date();
+  var calYear = now0.getFullYear(), calMonth = now0.getMonth();
+  var selDay = isoToday();
+  var fmtMonth = new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric" });
+  var fmtDayLong = new Intl.DateTimeFormat("de-DE", { weekday: "long", day: "numeric", month: "long" });
+  var MAX_PILLS = 3;
+
+  function dayTasks() {
+    var map = {};
+    tasks.forEach(function (t) {
+      if (!t.due || (settings.hideDone && t.done)) return;
+      (map[t.due] = map[t.due] || []).push(t);
+    });
+    Object.keys(map).forEach(function (k) {
+      map[k].sort(function (a, b) { return (a.done - b.done) || (a.createdAt - b.createdAt); });
+    });
+    return map;
+  }
+
+  function renderCalendar() {
+    var map = dayTasks(), today = isoToday();
+    $("calMonth").textContent = fmtMonth.format(new Date(calYear, calMonth, 1));
+    var first = new Date(calYear, calMonth, 1);
+    var offset = (first.getDay() + 6) % 7; // Woche beginnt Montag
+    var cells = [];
+    for (var i = 0; i < 42; i++) {
+      var d = new Date(calYear, calMonth, 1 - offset + i);
+      var iso = isoOf(d);
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "cal-day" + (d.getMonth() !== calMonth ? " other" : "") + (iso === today ? " today" : "") + (iso === selDay ? " sel" : "");
+      cell.dataset.iso = iso;
+      var list = map[iso] || [];
+      cell.setAttribute("aria-label", fmtDayLong.format(d) + (list.length ? ", " + list.length + " Aufgabe" + (list.length > 1 ? "n" : "") : ""));
+      var num = document.createElement("span"); num.className = "num"; num.textContent = d.getDate();
+      cell.appendChild(num);
+      var showN = list.length > MAX_PILLS ? MAX_PILLS - 1 : list.length;
+      for (var j = 0; j < showN; j++) {
+        var t = list[j], p = document.createElement("span");
+        p.className = "pill" + (t.done ? " done" : "") + (isOverdue(t) ? " overdue" : "");
+        p.textContent = t.text;
+        cell.appendChild(p);
+      }
+      if (list.length > showN) {
+        var m = document.createElement("span"); m.className = "pill more"; m.textContent = "+" + (list.length - showN);
+        cell.appendChild(m);
+      }
+      cells.push(cell);
+    }
+    $("calGrid").replaceChildren.apply($("calGrid"), cells);
+
+    var sel = map[selDay] || [];
+    var label = fmtDayLong.format(parseDay(selDay));
+    $("dayLabel").textContent = selDay === today ? "Heute, " + label : label;
+    $("dayList").replaceChildren.apply($("dayList"), sel.map(function (t) { return taskItem(t); }));
+    $("dayEmpty").hidden = sel.length > 0;
+  }
+
+  function shiftMonth(n) {
+    var d = new Date(calYear, calMonth + n, 1);
+    calYear = d.getFullYear(); calMonth = d.getMonth();
+    render();
+  }
+  $("calPrev").addEventListener("click", function () { shiftMonth(-1); });
+  $("calNext").addEventListener("click", function () { shiftMonth(1); });
+  $("calMonth").addEventListener("click", function () {
+    var n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); selDay = isoToday(); render();
+  });
+
+  // Wischen im Raster blättert den Monat
+  var calGrid = $("calGrid"), cx = null, cy = 0, lastCalSwipe = 0;
+  calGrid.addEventListener("pointerdown", function (e) { cx = e.clientX; cy = e.clientY; });
+  calGrid.addEventListener("pointerup", function (e) {
+    if (cx === null) return;
+    var dx = e.clientX - cx, dy = e.clientY - cy; cx = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) { lastCalSwipe = Date.now(); shiftMonth(dx < 0 ? 1 : -1); }
+  });
+  calGrid.addEventListener("pointercancel", function () { cx = null; });
+  calGrid.addEventListener("click", function (e) {
+    if (Date.now() - lastCalSwipe < 400) return;
+    var c = e.target.closest(".cal-day"); if (!c) return;
+    var d = parseDay(c.dataset.iso);
+    var wasSel = selDay === c.dataset.iso;
+    selDay = c.dataset.iso;
+    if (d.getMonth() !== calMonth || d.getFullYear() !== calYear) { calYear = d.getFullYear(); calMonth = d.getMonth(); }
+    render();
+    if (wasSel) openAdd(selDay); // zweites Antippen = neue Aufgabe für diesen Tag
+  });
+  $("dayAdd").addEventListener("click", function () { openAdd(selDay); });
+
+  $("viewTabs").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-view]"); if (!b) return;
+    settings.view = b.dataset.view; saveSettings(); render();
+  });
 
   function applyTheme() {
     var th = THEME_COLORS[settings.theme] ? settings.theme : "ruhig";
@@ -537,7 +851,7 @@ dialog form#add { padding: 0; display: block; }
     });
     $("title").textContent = THEME_TITLES[th];
     document.querySelector('meta[name="theme-color"]').setAttribute("content", THEME_COLORS[th]);
-    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute("content", th === "ruhig" ? "default" : "black");
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute("content", th === "neon" ? "black" : "default");
   }
 
   // ---------- Aktionen ----------
@@ -555,7 +869,10 @@ dialog form#add { padding: 0; display: block; }
     e.preventDefault();
     var text = $("newText").value.trim();
     if (!text) { $("newText").focus(); return; }
-    tasks.push({ id: uid(), text: text, due: $("newDue").value || null, done: false, doneAt: null, createdAt: Date.now() });
+    var due = $("newDue").value || null;
+    // Ohne Datum: ganz oben einreihen
+    tasks.push({ id: uid(), text: text, due: due, done: false, doneAt: null, createdAt: Date.now(), order: due ? Date.now() : topOrder() });
+    if (due) { selDay = due; var dd = parseDay(due); calYear = dd.getFullYear(); calMonth = dd.getMonth(); }
     saveTasks();
     $("addDialog").close();
     render();
@@ -579,16 +896,15 @@ dialog form#add { padding: 0; display: block; }
   // Hinzufügen
   var addDlg = $("addDialog");
   function openDialog(d) { setMenu(false); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); }
-  $("addBtn").addEventListener("click", function () {
-    $("newText").value = ""; $("newDue").value = ""; markDate($("newDue"));
+  function openAdd(day) {
+    $("newText").value = ""; $("newDue").value = day || ""; markDate($("newDue"));
     openDialog(addDlg); setTimeout(function () { $("newText").focus(); }, 50);
-  });
+  }
+  // In der Kalenderansicht bekommt die neue Aufgabe den gewählten Tag
+  $("addBtn").addEventListener("click", function () { openAdd(settings.view === "cal" ? selDay : ""); });
   $("addCancel").addEventListener("click", function () { addDlg.close(); });
 
   // Sicherung
-  var backupDlg = $("backupDialog");
-  $("backupBtn").addEventListener("click", function () { openDialog(backupDlg); });
-  $("backupClose").addEventListener("click", function () { backupDlg.close(); });
   $("openArchive").addEventListener("click", function () { setMenu(false); $("mainView").hidden = true; $("archiveView").hidden = false; window.scrollTo(0, 0); });
   $("closeArchive").addEventListener("click", function () { $("archiveView").hidden = true; $("mainView").hidden = false; });
 
@@ -602,12 +918,17 @@ dialog form#add { padding: 0; display: block; }
     $("editDue").value = t.due || ""; markDate($("editDue"));
     if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
   }
+  $("editClose").addEventListener("click", function () { dlg.close("cancel"); });
   $("clearDue").addEventListener("click", function () { $("editDue").value = ""; markDate($("editDue")); });
   dlg.addEventListener("close", function () {
     if (dlg.returnValue === "save" && editingId) {
       var t = find(editingId);
       var text = $("editText").value.trim();
-      if (t && text) { t.text = text; t.due = $("editDue").value || null; saveTasks(); render(); }
+      if (t && text) {
+        var newDue = $("editDue").value || null;
+        if (t.due && !newDue) t.order = topOrder(); // Datum entfernt: nach oben
+        t.text = text; t.due = newDue; saveTasks(); render();
+      }
     }
     editingId = null; dlg.returnValue = "";
   });
@@ -620,16 +941,42 @@ dialog form#add { padding: 0; display: block; }
   function disarmDelete() { var b = $("deleteBtn"); delete b.dataset.armed; b.textContent = "Löschen"; }
 
   // ---------- Sicherung ----------
-  $("exportBtn").addEventListener("click", function () {
+  // Punkt am Symbol: ungesicherte Änderungen und letzte Sicherung > 7 Tage her (oder nie gesichert)
+  function needsBackup() {
+    if (!settings.lastBackupAt) return tasks.length > 0;
+    return (settings.lastChangeAt || 0) > settings.lastBackupAt && Date.now() - settings.lastBackupAt > WEEK;
+  }
+  function backupAgo() {
+    if (!settings.lastBackupAt) return "Noch nie gesichert";
+    var d = new Date(settings.lastBackupAt);
+    var days = Math.round((todayStart() - new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()) / DAY);
+    var when = days <= 0 ? "heute" : days === 1 ? "gestern" : "vor " + days + " Tagen";
+    return "Letzte Sicherung: " + when;
+  }
+  function updateBackupUI() {
+    var need = needsBackup(), b = $("backupBtn");
+    b.classList.toggle("needs", need);
+    b.setAttribute("aria-label", need ? "Jetzt sichern (empfohlen)" : "Jetzt sichern");
+    $("backupInfo").textContent = backupAgo();
+  }
+  function markBackedUp() {
+    settings.lastBackupAt = Date.now(); saveSettings(); updateBackupUI(); toast("Gesichert");
+  }
+
+  $("backupBtn").addEventListener("click", function () {
+    setMenu(false);
     var data = JSON.stringify({ app: "aufgaben", version: 1, exportedAt: new Date().toISOString(), tasks: tasks }, null, 2);
     var name = "aufgaben-sicherung-" + isoToday() + ".json";
     var file;
     try { file = new File([data], name, { type: "application/json" }); } catch (e) { file = null; }
     if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file] }).catch(function (err) { if (err && err.name !== "AbortError") download(data, name); });
+      navigator.share({ files: [file] }).then(markBackedUp, function (err) {
+        if (err && err.name === "AbortError") return; // abgebrochen: zählt nicht
+        download(data, name); markBackedUp();
+      });
       return;
     }
-    download(data, name);
+    download(data, name); markBackedUp();
   });
   function download(data, name) {
     var url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
@@ -637,7 +984,7 @@ dialog form#add { padding: 0; display: block; }
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
   }
-  $("importBtn").addEventListener("click", function () { $("importFile").click(); });
+  $("importBtn").addEventListener("click", function () { setMenu(false); $("importFile").click(); });
   $("importFile").addEventListener("change", function () {
     var f = this.files && this.files[0]; this.value = "";
     if (!f) return;
@@ -656,10 +1003,13 @@ dialog form#add { padding: 0; display: block; }
             done: !!x.done, doneAt: x.done ? Number(x.doneAt) || Date.now() : null,
             createdAt: Number(x.createdAt) || Date.now()
           };
+          clean.order = isFinite(Number(x.order)) && x.order !== null && x.order !== "" ? Number(x.order) : clean.createdAt;
           var existing = find(clean.id);
           if (existing) { Object.assign(existing, clean); updated++; } else { tasks.push(clean); added++; }
         });
-        saveTasks(); render();
+        saveTasks();
+        settings.lastBackupAt = settings.lastChangeAt; saveSettings(); // Stand = Datei
+        render();
         toast(added + " neu, " + updated + " aktualisiert");
       } catch (e) { toast("Diese Datei konnte nicht gelesen werden."); }
     };
