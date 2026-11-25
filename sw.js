@@ -1,6 +1,6 @@
 // Speichert die App-Dateien auf dem Gerät, damit sie ohne Internet startet.
 // Deine Aufgaben werden hier NICHT verarbeitet – die liegen im lokalen Speicher der App.
-const CACHE = "aufgaben-v16";
+const CACHE = "aufgaben-v18";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./apple-touch-icon.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

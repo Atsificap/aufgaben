@@ -178,8 +178,8 @@ input:focus { border-color: var(--accent); }
 .btn[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 /* Liste */
-ul#list, ul#archiveList, ul#dayList { list-style: none; margin: 0; padding: 0; }
-ul#list:empty, ul#archiveList:empty, ul#dayList:empty { display: none; }
+ul#list, ul#archiveList, ul#dayList, ul#bdayList { list-style: none; margin: 0; padding: 0; }
+ul#list:empty, ul#archiveList:empty, ul#dayList:empty, ul#bdayList:empty { display: none; }
 li.task { position: relative; overflow: hidden; border-top: 1px solid var(--line); }
 li.task .row {
   position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px;
@@ -376,6 +376,62 @@ li.task.lifting .row { border-radius: calc(var(--radius) - 4px); }
 [data-theme="notiz"] .pill.more { background: none; color: var(--muted); }
 [data-theme="notiz"] .cal-head .month { text-decoration: underline wavy #f0b400; text-underline-offset: 5px; }
 
+/* ---------- Geburtstage ---------- */
+:root, [data-theme="ruhig"] { --bday: #c98a3c; --bday-text: #ffffff; --bday-strong: #b06f22; }
+[data-theme="neon"] { --bday: #3ee6ff; --bday-text: #160828; --bday-strong: #8ff3ff; }
+[data-theme="notiz"] { --bday: rgba(120, 200, 255, .6); --bday-text: #26324d; --bday-strong: #2f5bb7; }
+.tabs.three { grid-template-columns: 1fr 1fr 1.25fr; }
+.tabs.three button { font-size: 14px; padding: 7px 2px; }
+.pill.bday { background: var(--bday); color: var(--bday-text); }
+[data-theme="neon"] .pill.bday { box-shadow: 0 0 6px rgba(62,230,255,.6); }
+[data-theme="notiz"] .pill.bday { background: var(--bday); color: var(--bday-text); }
+li.bday .check { border-color: var(--bday); }
+li.bday.done .check { background: var(--bday); border-color: var(--bday); color: var(--bday-text); }
+[data-theme="notiz"] li.bday.done .check { background: transparent; border-color: var(--text); color: var(--accent); }
+li.bday .cake { flex: none; font-size: 18px; width: 22px; text-align: center; }
+li.bday.today .meta { color: var(--bday-strong); font-weight: 700; }
+li.bday.done .text { text-decoration: none; color: var(--text); }
+.hint { padding: 4px 12px; margin: 0 0 10px; font-size: 15px; }
+.hint-line { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; cursor: pointer; }
+.hint-line + .hint-line { border-top: 1px solid var(--line); }
+
+/* ---------- Zeiträume und Feiertage ---------- */
+:root, [data-theme="ruhig"] { --urlaub: #cfe1ec; --urlaub-text: #2e4a5a; --sonst: #e6dcc8; --sonst-text: #4a4840; }
+[data-theme="neon"] { --urlaub: #ffe066; --urlaub-text: #160828; --sonst: rgba(195,165,216,.55); --sonst-text: #ffffff; }
+[data-theme="notiz"] { --urlaub: rgba(110,210,130,.5); --urlaub-text: #26324d; --sonst: rgba(190,150,255,.38); --sonst-text: #26324d; }
+.band {
+  display: block; font-size: 10px; line-height: 15px; height: 15px; padding: 0 3px; margin: 0 -1px;
+  background: var(--urlaub); color: var(--urlaub-text); white-space: nowrap; overflow: hidden; text-align: left;
+}
+.band.sonst { background: var(--sonst); color: var(--sonst-text); }
+.band { position: relative; overflow: visible; }
+.band .lbl { position: absolute; left: 3px; top: 0; z-index: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
+.band.s { margin-left: 1px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+.band.e { margin-right: 1px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+[data-theme="neon"] .band:not(.sonst) { box-shadow: 0 0 6px rgba(255,224,102,.45); }
+.cal-day .hol { display: block; font-size: 9px; line-height: 10px; color: var(--overdue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -2px; }
+.cal-day.holiday:not(.today) .num { color: var(--overdue); font-weight: 700; }
+.day-hol { margin: 0 4px 6px; font-size: 14px; color: var(--overdue); }
+li.period .kind { flex: none; width: 22px; text-align: center; font-size: 18px; }
+li.period .row { min-height: 44px; }
+li.period.past .text { color: var(--muted); }
+.seg.two { grid-template-columns: 1fr 1fr; padding: 0; }
+.seg.kind-pick { padding: 0; }
+.bday-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 4px 6px; }
+.bday-head span { font-size: 15px; color: var(--muted); }
+.bday-head .btn { min-height: 36px; padding: 6px 12px; font-size: 15px; }
+.bday-row { display: grid; grid-template-columns: 1fr 1.6fr 1.2fr; gap: 8px; }
+.bday-row label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+dialog select, dialog input[type="number"] {
+  width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text);
+  border-radius: calc(var(--radius) - 4px); padding: 10px 8px; outline: none; min-height: 44px; min-width: 0;
+  -webkit-appearance: none; appearance: none;
+}
+[data-theme="neon"] dialog select option { background: #1e0b37; }
+[data-theme="notiz"] dialog select, [data-theme="notiz"] dialog input[type="number"] {
+  border: none; border-bottom: 2px solid var(--input-border); border-radius: 0;
+}
+
 dialog .hint { font-size: 15px; color: var(--muted); margin: 0 0 6px; }
 dialog form#add { padding: 0; display: block; }
 </style>
@@ -398,6 +454,7 @@ dialog form#add { padding: 0; display: block; }
     <div class="menu panel" id="menu" role="menu" hidden>
       <button class="menu-item" id="toggleDone" type="button" role="menuitem">Erledigte ausblenden</button>
       <button class="menu-item" id="openArchive" type="button" role="menuitem">Archiv</button>
+      <button class="menu-item" id="toggleHol" type="button" role="menuitem">Feiertage ausblenden</button>
       <div class="menu-label">Sicherung</div>
       <div class="menu-info" id="backupInfo"></div>
       <button class="menu-item" id="importBtn" type="button" role="menuitem">Sicherung importieren …</button>
@@ -411,12 +468,14 @@ dialog form#add { padding: 0; display: block; }
   </header>
 
   <section id="mainView">
-    <div class="tabs panel" id="viewTabs">
+    <div class="tabs three panel" id="viewTabs">
       <button type="button" data-view="list">Liste</button>
       <button type="button" data-view="cal">Kalender</button>
+      <button type="button" data-view="bday">Geburtstage</button>
     </div>
 
     <div id="listView">
+      <div class="hint panel" id="hint" hidden></div>
       <ul id="list" class="panel"></ul>
       <p class="empty" id="empty" hidden></p>
     </div>
@@ -435,8 +494,18 @@ dialog form#add { padding: 0; display: block; }
         <span id="dayLabel"></span>
         <button class="btn" id="dayAdd" type="button">+ Aufgabe</button>
       </div>
+      <p class="day-hol" id="dayHol" hidden></p>
       <ul id="dayList" class="panel"></ul>
-      <p class="empty" id="dayEmpty" hidden>Keine Aufgaben an diesem Tag.</p>
+      <p class="empty" id="dayEmpty" hidden>Nichts eingetragen an diesem Tag.</p>
+    </div>
+
+    <div id="bdayView" hidden>
+      <div class="bday-head">
+        <span id="bdayCount"></span>
+        <button class="btn" id="bdayAdd" type="button">+ Geburtstag</button>
+      </div>
+      <ul id="bdayList" class="panel"></ul>
+      <p class="empty" id="bdayEmpty" hidden>Noch keine Geburtstage. Tippe auf „+ Geburtstag“.</p>
     </div>
   </section>
 
@@ -451,8 +520,12 @@ dialog form#add { padding: 0; display: block; }
 <dialog id="addDialog">
   <form id="add" autocomplete="off">
     <button class="x-btn" id="addCancel" type="button" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    <h2>Neue Aufgabe</h2>
+    <h2>Neu</h2>
     <div class="stack">
+      <div class="seg two" id="addKind">
+        <button type="button" data-kind="task" aria-pressed="true">Aufgabe</button>
+        <button type="button" data-kind="period" aria-pressed="false">Zeitraum (von – bis)</button>
+      </div>
       <input id="newText" type="text" placeholder="Was ist zu tun?" enterkeyhint="done" maxlength="500">
       <div class="date-row">
         <label for="newDue">Datum</label>
@@ -488,6 +561,53 @@ dialog form#add { padding: 0; display: block; }
   </form>
 </dialog>
 
+<dialog id="bdayDialog">
+  <form method="dialog" id="bdayForm" autocomplete="off">
+    <button class="x-btn" id="bdayClose" type="button" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h2 id="bdayTitle">Neuer Geburtstag</h2>
+    <div class="stack">
+      <input id="bdayName" type="text" placeholder="Name" enterkeyhint="done" maxlength="200">
+      <div class="bday-row">
+        <label>Tag<select id="bdayDay"></select></label>
+        <label>Monat<select id="bdayMonth"></select></label>
+        <label>Jahr (optional)<input id="bdayYear" type="number" inputmode="numeric" min="1900" max="2100" placeholder="z. B. 1985"></label>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn danger" id="bdayDelete" type="button" hidden>Löschen</button>
+      <span class="spacer"></span>
+      <button class="btn primary" value="save" type="submit" id="bdaySave">Hinzufügen</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="perDialog">
+  <form method="dialog" id="perForm" autocomplete="off">
+    <button class="x-btn" id="perClose" type="button" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h2 id="perTitle">Neuer Zeitraum</h2>
+    <div class="stack">
+      <div class="seg two kind-pick" id="perKind">
+        <button type="button" data-kind="urlaub">🌴 Urlaub</button>
+        <button type="button" data-kind="sonst">📌 Sonstiges</button>
+      </div>
+      <input id="perName" type="text" placeholder="Name, z. B. Mallorca" enterkeyhint="done" maxlength="200">
+      <div class="date-row">
+        <label for="perFrom">Von</label>
+        <input id="perFrom" type="date">
+      </div>
+      <div class="date-row">
+        <label for="perTo">Bis&nbsp;&nbsp;</label>
+        <input id="perTo" type="date">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn danger" id="perDelete" type="button" hidden>Löschen</button>
+      <span class="spacer"></span>
+      <button class="btn primary" type="submit" id="perSave">Hinzufügen</button>
+    </div>
+  </form>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -509,7 +629,7 @@ dialog form#add { padding: 0; display: block; }
   if (!Array.isArray(tasks)) tasks = [];
   // Reihenfolge für Aufgaben ohne Datum (bisherige Reihenfolge = nach Erstellung)
   tasks.forEach(function (t) { if (!isFinite(t.order)) t.order = Number(t.createdAt) || 0; });
-  var settings = Object.assign({ theme: "ruhig", hideDone: false, view: "list" }, readJSON(SETTINGS_KEY, {}));
+  var settings = Object.assign({ theme: "ruhig", hideDone: false, view: "list", holidays: true }, readJSON(SETTINGS_KEY, {}));
   if (settings.theme === "festung" || settings.theme === "helden") settings.theme = "ruhig";
 
   function saveTasks() {
@@ -519,6 +639,26 @@ dialog form#add { padding: 0; display: block; }
   }
   function saveSettings() {
     try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {}
+  }
+
+  // Geburtstage: { id, name, month (1-12), day (1-31), year|null, doneFor: "JJJJ-MM-TT"|null, createdAt }
+  var BDAY_KEY = "aufgaben.birthdays.v1";
+  var birthdays = readJSON(BDAY_KEY, []);
+  if (!Array.isArray(birthdays)) birthdays = [];
+  function saveBirthdays() {
+    try { localStorage.setItem(BDAY_KEY, JSON.stringify(birthdays)); }
+    catch (e) { toast("Speichern fehlgeschlagen. Bitte exportieren!"); }
+    settings.lastChangeAt = Date.now(); saveSettings();
+  }
+
+  // Zeiträume: { id, name, from: "JJJJ-MM-TT", to: "JJJJ-MM-TT", kind: "urlaub"|"sonst", createdAt }
+  var PER_KEY = "aufgaben.periods.v1";
+  var periods = readJSON(PER_KEY, []);
+  if (!Array.isArray(periods)) periods = [];
+  function savePeriods() {
+    try { localStorage.setItem(PER_KEY, JSON.stringify(periods)); }
+    catch (e) { toast("Speichern fehlgeschlagen. Bitte exportieren!"); }
+    settings.lastChangeAt = Date.now(); saveSettings();
   }
   // iOS/Browser bitten, den Speicher nicht automatisch zu räumen
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
@@ -723,8 +863,11 @@ dialog form#add { padding: 0; display: block; }
       return taskItem(t, { draggable: !t.done && !t.due && undatedCount > 1 });
     }));
     renderCalendar();
-    var isCal = settings.view === "cal";
-    $("listView").hidden = isCal; $("calView").hidden = !isCal;
+    renderBirthdays();
+    if (["list", "cal", "bday"].indexOf(settings.view) < 0) settings.view = "list";
+    $("listView").hidden = settings.view !== "list";
+    $("calView").hidden = settings.view !== "cal";
+    $("bdayView").hidden = settings.view !== "bday";
     Array.prototype.forEach.call(document.querySelectorAll("#viewTabs button"), function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.view === settings.view));
     });
@@ -741,6 +884,7 @@ dialog form#add { padding: 0; display: block; }
 
 
     updateBackupUI();
+    $("toggleHol").textContent = settings.holidays ? "Feiertage ausblenden" : "Feiertage anzeigen";
     var tb = $("toggleDone");
     tb.setAttribute("aria-pressed", String(settings.hideDone));
     tb.textContent = settings.hideDone ? "Erledigte anzeigen" + (done.length ? " (" + done.length + ")" : "") : "Erledigte ausblenden";
@@ -780,20 +924,48 @@ dialog form#add { padding: 0; display: block; }
       cell.type = "button";
       cell.className = "cal-day" + (d.getMonth() !== calMonth ? " other" : "") + (iso === today ? " today" : "") + (iso === selDay ? " sel" : "");
       cell.dataset.iso = iso;
-      var list = map[iso] || [];
-      cell.setAttribute("aria-label", fmtDayLong.format(d) + (list.length ? ", " + list.length + " Aufgabe" + (list.length > 1 ? "n" : "") : ""));
+      var list = map[iso] || [], bl = bdaysOn(iso), pl = periodsOn(iso), hol = holidayOn(iso);
+      if (hol) cell.classList.add("holiday");
+      var total = pl.length + bl.length + list.length;
+      cell.setAttribute("aria-label", fmtDayLong.format(d)
+        + (hol ? ", Feiertag: " + hol.name : "")
+        + (pl.length ? ", " + pl.map(function (x) { return x.name; }).join(", ") : "")
+        + (bl.length ? ", Geburtstag: " + bl.map(function (b) { return b.name; }).join(", ") : "")
+        + (list.length ? ", " + list.length + " Aufgabe" + (list.length > 1 ? "n" : "") : ""));
       var num = document.createElement("span"); num.className = "num"; num.textContent = d.getDate();
       cell.appendChild(num);
-      var showN = list.length > MAX_PILLS ? MAX_PILLS - 1 : list.length;
+      var showN = total > MAX_PILLS ? MAX_PILLS - 1 : total;
       for (var j = 0; j < showN; j++) {
-        var t = list[j], p = document.createElement("span");
-        p.className = "pill" + (t.done ? " done" : "") + (isOverdue(t) ? " overdue" : "");
-        p.textContent = t.text;
+        var p = document.createElement("span");
+        if (j < pl.length) {
+          var per = pl[j];
+          p.className = "band" + (per.kind === "sonst" ? " sonst" : "") + (iso === per.from ? " s" : "") + (iso === per.to ? " e" : "");
+          // Name am Anfang, am Wochenanfang und in der ersten Zelle zeigen
+          p.textContent = "\u00a0";
+          if (iso === per.from || i % 7 === 0) {
+            // Beschriftung darf über den Balken bis zum Wochen- oder Zeitraumende laufen
+            var span = Math.min(7 - i % 7, Math.round((parseDay(per.to) - d) / DAY) + 1);
+            var lbl = document.createElement("span"); lbl.className = "lbl";
+            lbl.textContent = (per.kind === "sonst" ? "" : "🌴 ") + per.name;
+            lbl.style.width = "calc(" + (span * 100) + "% + " + ((span - 1) * 2 - 6) + "px)";
+            p.appendChild(lbl);
+          }
+        } else if (j < pl.length + bl.length) {
+          p.className = "pill bday"; p.textContent = "🎂 " + bl[j - pl.length].name;
+        } else {
+          var t = list[j - pl.length - bl.length];
+          p.className = "pill" + (t.done ? " done" : "") + (isOverdue(t) ? " overdue" : "");
+          p.textContent = t.text;
+        }
         cell.appendChild(p);
       }
-      if (list.length > showN) {
-        var m = document.createElement("span"); m.className = "pill more"; m.textContent = "+" + (list.length - showN);
+      if (total > showN) {
+        var m = document.createElement("span"); m.className = "pill more"; m.textContent = "+" + (total - showN);
         cell.appendChild(m);
+      }
+      if (hol) {
+        var h = document.createElement("span"); h.className = "hol"; h.textContent = hol.short;
+        h.style.marginTop = "auto"; cell.appendChild(h);
       }
       cells.push(cell);
     }
@@ -802,9 +974,342 @@ dialog form#add { padding: 0; display: block; }
     var sel = map[selDay] || [];
     var label = fmtDayLong.format(parseDay(selDay));
     $("dayLabel").textContent = selDay === today ? "Heute, " + label : label;
-    $("dayList").replaceChildren.apply($("dayList"), sel.map(function (t) { return taskItem(t); }));
-    $("dayEmpty").hidden = sel.length > 0;
+    var selB = bdaysOn(selDay), selD = parseDay(selDay), selP = periodsOn(selDay), selH = holidayOn(selDay);
+    $("dayHol").hidden = !selH;
+    $("dayHol").textContent = selH ? "Feiertag: " + selH.name : "";
+    $("dayList").replaceChildren.apply($("dayList"), selP.map(function (x) { return periodItem(x); })
+      .concat(selB.map(function (b) { return bdayItem(b, bdayDate(b, selD.getFullYear())); }))
+      .concat(sel.map(function (t) { return taskItem(t); })));
+    $("dayEmpty").hidden = sel.length + selB.length + selP.length > 0;
   }
+
+  // ---------- Geburtstage ----------
+  function isLeap(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
+  // Tag des Geburtstags in einem bestimmten Jahr (29.02. → 28.02. in Nicht-Schaltjahren)
+  function bdayDate(b, y) {
+    var day = (b.month === 2 && b.day === 29 && !isLeap(y)) ? 28 : b.day;
+    return new Date(y, b.month - 1, day);
+  }
+  // Nächster Termin ab heute (heute zählt mit)
+  function nextBday(b) {
+    var t0 = todayStart(), y = new Date().getFullYear(), d = bdayDate(b, y);
+    if (d.getTime() < t0) d = bdayDate(b, y + 1);
+    return d;
+  }
+  function ageAt(b, d) { return b.year ? d.getFullYear() - b.year : null; }
+  function bdaysOn(iso) {
+    var d = parseDay(iso);
+    return birthdays.filter(function (b) { return isoOf(bdayDate(b, d.getFullYear())) === iso; })
+      .sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
+  }
+  function inDays(d) { return Math.round((d.getTime() - todayStart()) / DAY); }
+  function whenText(n) { return n === 0 ? "heute" : n === 1 ? "morgen" : "in " + n + " Tagen"; }
+  var fmtDM = new Intl.DateTimeFormat("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" });
+
+  // Eintrag für Liste und Tagesansicht; on = Datum dieses Termins
+  function bdayItem(b, on) {
+    var iso = isoOf(on), n = inDays(on), age = ageAt(b, on), isDone = b.doneFor === iso;
+    var li = document.createElement("li");
+    li.className = "task bday" + (isDone ? " done" : "") + (n === 0 ? " today" : "");
+    var check = document.createElement("button");
+    check.type = "button"; check.className = "check";
+    check.setAttribute("aria-label", isDone ? "Gratulation zurücknehmen" : "Gratuliert");
+    var mark = document.createElement("span"); mark.textContent = "✓"; check.appendChild(mark);
+    check.addEventListener("click", function () {
+      if (swipeGuard(check)) return;
+      b.doneFor = isDone ? null : iso; saveBirthdays(); render();
+      if (!isDone) toast("Gratuliert 🎉");
+    });
+    var cake = document.createElement("span"); cake.className = "cake"; cake.textContent = "🎂"; cake.setAttribute("aria-hidden", "true");
+    var body = document.createElement("div"); body.className = "body";
+    var text = document.createElement("span"); text.className = "text"; text.textContent = b.name; body.appendChild(text);
+    var meta = document.createElement("span"); meta.className = "meta";
+    var parts = [];
+    if (n >= 0 && n < 365) parts.push(n <= 1 ? whenText(n).replace(/^./, function (c) { return c.toUpperCase(); }) + ", " + fmtDM.format(on) : fmtDM.format(on) + " · " + whenText(n));
+    else parts.push(fmtDM.format(on));
+    if (age !== null && age >= 0) parts.push((n < 0 ? "wurde " : "wird ") + age);
+    if (isDone) parts.push("gratuliert ✓");
+    meta.textContent = parts.join(" · ");
+    body.appendChild(meta);
+    body.addEventListener("click", function () { if (!swipeGuard(body)) openBday(b.id); });
+    var row = document.createElement("div"); row.className = "row";
+    row.appendChild(check); row.appendChild(cake); row.appendChild(body);
+    var del = document.createElement("button");
+    del.type = "button"; del.className = "swipe-del"; del.textContent = "Löschen"; del.tabIndex = -1;
+    del.addEventListener("click", function () { removeBday(b.id); });
+    li.appendChild(del); li.appendChild(row);
+    attachSwipe(row);
+    return li;
+  }
+
+  function renderBirthdays() {
+    var upcoming = birthdays.map(function (b) { return { b: b, d: nextBday(b) }; })
+      .sort(function (x, y) { return (x.d - y.d) || x.b.name.localeCompare(y.b.name, "de"); });
+    $("bdayList").replaceChildren.apply($("bdayList"), upcoming.map(function (x) { return bdayItem(x.b, x.d); }));
+    $("bdayEmpty").hidden = upcoming.length > 0;
+    $("bdayCount").textContent = upcoming.length ? upcoming.length + " Geburtstag" + (upcoming.length > 1 ? "e" : "") + ", nach Datum" : "";
+
+    renderHint(upcoming);
+  }
+
+  // ---------- Hinweise über der Aufgabenliste ----------
+  function goToDay(iso) {
+    var d = parseDay(iso); selDay = iso; calYear = d.getFullYear(); calMonth = d.getMonth();
+    settings.view = "cal"; saveSettings(); render(); window.scrollTo(0, 0);
+  }
+  function hintLine(icon, text, onClick) {
+    var row = document.createElement("div"); row.className = "hint-line";
+    var c = document.createElement("span"); c.textContent = icon; c.setAttribute("aria-hidden", "true");
+    var t = document.createElement("span"); t.textContent = text;
+    row.appendChild(c); row.appendChild(t);
+    row.addEventListener("click", onClick);
+    return row;
+  }
+  function renderHint(upcoming) {
+    var lines = [], today = isoToday();
+    // Feiertag heute oder morgen
+    var tmIso = isoOf(new Date(todayStart() + DAY * 1.5));
+    var hToday = holidayOn(today), hTm = holidayOn(tmIso);
+    if (hToday) lines.push(hintLine("🎉", "Heute ist Feiertag: " + hToday.name, function () { goToDay(today); }));
+    else if (hTm) lines.push(hintLine("🎉", "Morgen ist Feiertag: " + hTm.name, function () { goToDay(tmIso); }));
+    // Zeiträume: laufend oder Beginn in den nächsten 7 Tagen
+    periods.slice().sort(function (a, b) { return a.from < b.from ? -1 : a.from > b.from ? 1 : 0; }).forEach(function (x) {
+      var icon = x.kind === "sonst" ? "📌" : "🌴";
+      if (x.from <= today && today <= x.to) {
+        var left = inDays(parseDay(x.to));
+        lines.push(hintLine(icon, x.name + ": " + (left === 0 ? "heute letzter Tag" : "noch bis " + fmtDM.format(parseDay(x.to))), function () { goToDay(today); }));
+      } else if (x.from > today) {
+        var n = inDays(parseDay(x.from));
+        if (n <= 7) lines.push(hintLine(icon, x.name + " " + (n === 1 ? "ab morgen" : "in " + n + " Tagen"), function () { goToDay(x.from); }));
+      }
+    });
+    // Geburtstage in den nächsten 7 Tagen
+    var soon = upcoming.filter(function (x) { return inDays(x.d) <= 7 && x.b.doneFor !== isoOf(x.d); });
+    if (soon.length) {
+      var txt = soon.slice(0, 3).map(function (x) {
+        var a = ageAt(x.b, x.d);
+        return x.b.name + " " + whenText(inDays(x.d)) + (a !== null && a >= 0 ? " (" + a + ")" : "");
+      }).join(", ") + (soon.length > 3 ? " und " + (soon.length - 3) + " weitere" : "");
+      lines.push(hintLine("🎂", txt, function () { settings.view = "bday"; saveSettings(); render(); }));
+    }
+    var hint = $("hint");
+    hint.replaceChildren.apply(hint, lines);
+    hint.hidden = lines.length === 0;
+  }
+
+  // ---------- Feiertage (Hamburg) ----------
+  function easter(y) { // Gaußsche Osterformel (gregorianisch)
+    var a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+    var f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+    var h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+    var l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+    var month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(y, month - 1, day);
+  }
+  var holCache = {};
+  function holidaysOf(y) {
+    if (holCache[y]) return holCache[y];
+    var map = {}, e = easter(y);
+    function fixed(mo, d, name, short) { map[isoOf(new Date(y, mo - 1, d))] = { name: name, short: short || name }; }
+    function rel(n, name, short) { map[isoOf(new Date(e.getFullYear(), e.getMonth(), e.getDate() + n))] = { name: name, short: short || name }; }
+    fixed(1, 1, "Neujahr");
+    rel(-2, "Karfreitag");
+    rel(1, "Ostermontag", "Ostermo.");
+    fixed(5, 1, "Tag der Arbeit", "1. Mai");
+    rel(39, "Christi Himmelfahrt", "Himmelf.");
+    rel(50, "Pfingstmontag", "Pfingstmo.");
+    fixed(10, 3, "Tag der Deutschen Einheit", "Dt. Einheit");
+    if (y >= 2017) fixed(10, 31, "Reformationstag", "Reformat.");
+    fixed(12, 25, "1. Weihnachtstag", "1. Weihn.");
+    fixed(12, 26, "2. Weihnachtstag", "2. Weihn.");
+    return (holCache[y] = map);
+  }
+  function holidayOn(iso) {
+    if (!settings.holidays) return null;
+    return holidaysOf(Number(iso.slice(0, 4)))[iso] || null;
+  }
+  $("toggleHol").addEventListener("click", function () {
+    settings.holidays = !settings.holidays; saveSettings(); render(); setMenu(false);
+  });
+
+  // ---------- Zeiträume ----------
+  function periodsOn(iso) {
+    return periods.filter(function (x) { return x.from <= iso && iso <= x.to; })
+      .sort(function (a, b) { return (a.from < b.from ? -1 : a.from > b.from ? 1 : 0) || a.name.localeCompare(b.name, "de"); });
+  }
+  function findPer(id) { for (var i = 0; i < periods.length; i++) if (periods[i].id === id) return periods[i]; return null; }
+  function fmtRangeDay(iso) {
+    var d = parseDay(iso);
+    return d.getFullYear() === new Date().getFullYear() ? fmtDM.format(d) : fmtYear.format(d);
+  }
+  function periodItem(x) {
+    var today = isoToday();
+    var li = document.createElement("li");
+    li.className = "task period" + (x.to < today ? " past" : "");
+    var icon = document.createElement("span"); icon.className = "kind"; icon.textContent = x.kind === "sonst" ? "📌" : "🌴"; icon.setAttribute("aria-hidden", "true");
+    var body = document.createElement("div"); body.className = "body";
+    var text = document.createElement("span"); text.className = "text"; text.textContent = x.name; body.appendChild(text);
+    var len = Math.round((parseDay(x.to) - parseDay(x.from)) / DAY) + 1;
+    var parts = [x.from === x.to ? fmtRangeDay(x.from) : fmtRangeDay(x.from) + " – " + fmtRangeDay(x.to)];
+    if (x.to < today) parts.push("vorbei");
+    else if (x.from > today) { var n = inDays(parseDay(x.from)); parts.push(n === 1 ? "ab morgen" : "in " + n + " Tagen"); }
+    else parts.push("Tag " + (Math.round((todayStart() - parseDay(x.from)) / DAY) + 1) + " von " + len);
+    if (len > 1 && x.from > today) parts.push(len + " Tage");
+    var meta = document.createElement("span"); meta.className = "meta"; meta.textContent = parts.join(" · ");
+    body.appendChild(meta);
+    body.addEventListener("click", function () { if (!swipeGuard(body)) openPer(x.id); });
+    var row = document.createElement("div"); row.className = "row";
+    row.appendChild(icon); row.appendChild(body);
+    var del = document.createElement("button");
+    del.type = "button"; del.className = "swipe-del"; del.textContent = "Löschen"; del.tabIndex = -1;
+    del.addEventListener("click", function () { removePer(x.id); });
+    li.appendChild(del); li.appendChild(row);
+    attachSwipe(row);
+    return li;
+  }
+  var lastDeletedPer = null;
+  function removePer(id) {
+    var idx = -1;
+    for (var i = 0; i < periods.length; i++) if (periods[i].id === id) idx = i;
+    if (idx < 0) return;
+    lastDeletedPer = { x: periods[idx], index: idx };
+    periods.splice(idx, 1); savePeriods(); render();
+    toast("Gelöscht", "Rückgängig", function () {
+      if (!lastDeletedPer) return;
+      periods.splice(Math.min(lastDeletedPer.index, periods.length), 0, lastDeletedPer.x);
+      lastDeletedPer = null; savePeriods(); render();
+    });
+  }
+
+  var perDlg = $("perDialog"), editingPer = null, perKind = "urlaub";
+  function setPerKind(k) {
+    perKind = k === "sonst" ? "sonst" : "urlaub";
+    Array.prototype.forEach.call(document.querySelectorAll("#perKind button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.kind === perKind));
+    });
+    $("perName").placeholder = perKind === "urlaub" ? "Name, z. B. Mallorca" : "Name, z. B. Dienstreise Berlin";
+  }
+  $("perKind").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-kind]"); if (b) setPerKind(b.dataset.kind);
+  });
+  function openPer(id, presetIso, presetName) {
+    var x = id ? findPer(id) : null;
+    editingPer = x ? x.id : null;
+    $("perTitle").textContent = x ? "Zeitraum bearbeiten" : "Neuer Zeitraum";
+    $("perSave").textContent = x ? "Speichern" : "Hinzufügen";
+    setPerKind(x ? x.kind : "urlaub");
+    $("perName").value = x ? x.name : (presetName || "");
+    $("perFrom").value = x ? x.from : (presetIso || isoToday());
+    $("perTo").value = x ? x.to : "";
+    markDate($("perFrom")); markDate($("perTo"));
+    var del = $("perDelete"); del.hidden = !x; delete del.dataset.armed; del.textContent = "Löschen";
+    openDialog(perDlg);
+    if (!x) setTimeout(function () { $("perName").focus(); }, 50);
+  }
+  ["perFrom", "perTo"].forEach(function (id) { $(id).addEventListener("input", function () { markDate($(id)); }); });
+  // "Bis" darf nicht vor "Von" liegen: beim Ändern von "Von" mitziehen
+  $("perFrom").addEventListener("change", function () {
+    if ($("perTo").value && $("perTo").value < $("perFrom").value) { $("perTo").value = $("perFrom").value; markDate($("perTo")); }
+  });
+  $("perClose").addEventListener("click", function () { perDlg.close("cancel"); });
+  $("perForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("perName").value.trim() || (perKind === "urlaub" ? "Urlaub" : "");
+    if (!name) { $("perName").focus(); return; }
+    var from = $("perFrom").value, to = $("perTo").value || from;
+    if (!from) { toast("Bitte ein Startdatum wählen."); return; }
+    if (to < from) { toast("„Bis“ liegt vor „Von“."); return; }
+    var x = editingPer ? findPer(editingPer) : null;
+    if (x) { x.name = name; x.from = from; x.to = to; x.kind = perKind; }
+    else periods.push({ id: uid(), name: name, from: from, to: to, kind: perKind, createdAt: Date.now() });
+    savePeriods();
+    if (!(selDay >= from && selDay <= to)) { selDay = from; var d = parseDay(from); calYear = d.getFullYear(); calMonth = d.getMonth(); }
+    perDlg.close("save"); render();
+  });
+  $("perDelete").addEventListener("click", function () {
+    var btn = $("perDelete"), id = editingPer;
+    if (!id) return;
+    if (!btn.dataset.armed) { btn.dataset.armed = "1"; btn.textContent = "Wirklich löschen?"; return; }
+    perDlg.close("deleted"); removePer(id);
+  });
+  perDlg.addEventListener("close", function () { editingPer = null; perDlg.returnValue = ""; });
+
+  // Im Dialog "Neu" auf Zeitraum umschalten
+  $("addKind").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-kind]"); if (!b || b.dataset.kind !== "period") return;
+    var name = $("newText").value.trim(), from = $("newDue").value;
+    $("addDialog").close();
+    openPer(null, from || (settings.view === "cal" ? selDay : isoToday()), name);
+  });
+
+  var lastDeletedBday = null;
+  function removeBday(id) {
+    var idx = -1;
+    for (var i = 0; i < birthdays.length; i++) if (birthdays[i].id === id) idx = i;
+    if (idx < 0) return;
+    lastDeletedBday = { b: birthdays[idx], index: idx };
+    birthdays.splice(idx, 1); saveBirthdays(); render();
+    toast("Gelöscht", "Rückgängig", function () {
+      if (!lastDeletedBday) return;
+      birthdays.splice(Math.min(lastDeletedBday.index, birthdays.length), 0, lastDeletedBday.b);
+      lastDeletedBday = null; saveBirthdays(); render();
+    });
+  }
+  function findBday(id) { for (var i = 0; i < birthdays.length; i++) if (birthdays[i].id === id) return birthdays[i]; return null; }
+
+  // Dialog
+  var bdayDlg = $("bdayDialog"), editingBday = null;
+  (function fillSelects() {
+    var ds = $("bdayDay"), ms = $("bdayMonth");
+    for (var i = 1; i <= 31; i++) { var o = document.createElement("option"); o.value = i; o.textContent = i + "."; ds.appendChild(o); }
+    var mf = new Intl.DateTimeFormat("de-DE", { month: "long" });
+    for (var m = 1; m <= 12; m++) { var p = document.createElement("option"); p.value = m; p.textContent = mf.format(new Date(2000, m - 1, 1)); ms.appendChild(p); }
+  })();
+  function openBday(id, presetIso) {
+    var b = id ? findBday(id) : null;
+    editingBday = b ? b.id : null;
+    var ref = presetIso ? parseDay(presetIso) : new Date();
+    $("bdayTitle").textContent = b ? "Geburtstag bearbeiten" : "Neuer Geburtstag";
+    $("bdaySave").textContent = b ? "Speichern" : "Hinzufügen";
+    $("bdayName").value = b ? b.name : "";
+    $("bdayDay").value = String(b ? b.day : ref.getDate());
+    $("bdayMonth").value = String(b ? b.month : ref.getMonth() + 1);
+    $("bdayYear").value = b && b.year ? b.year : "";
+    var del = $("bdayDelete"); del.hidden = !b; delete del.dataset.armed; del.textContent = "Löschen";
+    openDialog(bdayDlg);
+    if (!b) setTimeout(function () { $("bdayName").focus(); }, 50);
+  }
+  $("bdayClose").addEventListener("click", function () { bdayDlg.close("cancel"); });
+  $("bdayAdd").addEventListener("click", function () { openBday(null); });
+  $("bdayForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("bdayName").value.trim();
+    if (!name) { $("bdayName").focus(); return; }
+    var day = Number($("bdayDay").value), month = Number($("bdayMonth").value);
+    var maxDay = new Date(2000, month, 0).getDate(); // 2000 = Schaltjahr, damit 29.02. erlaubt ist
+    if (day > maxDay) { toast("Den " + day + ". gibt es in diesem Monat nicht."); return; }
+    var yv = $("bdayYear").value.trim(), year = null;
+    if (yv) {
+      year = Number(yv);
+      if (!/^\d{4}$/.test(yv) || year < 1900 || year > new Date().getFullYear()) { toast("Bitte ein Jahr wie 1985 eingeben oder leer lassen."); return; }
+      if (month === 2 && day === 29 && !isLeap(year)) { toast(year + " war kein Schaltjahr."); return; }
+    }
+    var b = editingBday ? findBday(editingBday) : null;
+    if (b) {
+      if (b.day !== day || b.month !== month) b.doneFor = null;
+      b.name = name; b.day = day; b.month = month; b.year = year;
+    } else {
+      birthdays.push({ id: uid(), name: name, day: day, month: month, year: year, doneFor: null, createdAt: Date.now() });
+    }
+    saveBirthdays(); bdayDlg.close("save"); render();
+  });
+  $("bdayDelete").addEventListener("click", function () {
+    var btn = $("bdayDelete"), id = editingBday;
+    if (!id) return;
+    if (!btn.dataset.armed) { btn.dataset.armed = "1"; btn.textContent = "Wirklich löschen?"; return; }
+    bdayDlg.close("deleted"); removeBday(id);
+  });
+  bdayDlg.addEventListener("close", function () { editingBday = null; bdayDlg.returnValue = ""; });
 
   function shiftMonth(n) {
     var d = new Date(calYear, calMonth + n, 1);
@@ -901,7 +1406,11 @@ dialog form#add { padding: 0; display: block; }
     openDialog(addDlg); setTimeout(function () { $("newText").focus(); }, 50);
   }
   // In der Kalenderansicht bekommt die neue Aufgabe den gewählten Tag
-  $("addBtn").addEventListener("click", function () { openAdd(settings.view === "cal" ? selDay : ""); });
+  // In der Geburtstagsansicht legt + einen Geburtstag an
+  $("addBtn").addEventListener("click", function () {
+    if (settings.view === "bday") openBday(null);
+    else openAdd(settings.view === "cal" ? selDay : "");
+  });
   $("addCancel").addEventListener("click", function () { addDlg.close(); });
 
   // Sicherung
@@ -943,7 +1452,7 @@ dialog form#add { padding: 0; display: block; }
   // ---------- Sicherung ----------
   // Punkt am Symbol: ungesicherte Änderungen und letzte Sicherung > 7 Tage her (oder nie gesichert)
   function needsBackup() {
-    if (!settings.lastBackupAt) return tasks.length > 0;
+    if (!settings.lastBackupAt) return tasks.length + birthdays.length + periods.length > 0;
     return (settings.lastChangeAt || 0) > settings.lastBackupAt && Date.now() - settings.lastBackupAt > WEEK;
   }
   function backupAgo() {
@@ -965,7 +1474,7 @@ dialog form#add { padding: 0; display: block; }
 
   $("backupBtn").addEventListener("click", function () {
     setMenu(false);
-    var data = JSON.stringify({ app: "aufgaben", version: 1, exportedAt: new Date().toISOString(), tasks: tasks }, null, 2);
+    var data = JSON.stringify({ app: "aufgaben", version: 2, exportedAt: new Date().toISOString(), tasks: tasks, birthdays: birthdays, periods: periods }, null, 2);
     var name = "aufgaben-sicherung-" + isoToday() + ".json";
     var file;
     try { file = new File([data], name, { type: "application/json" }); } catch (e) { file = null; }
@@ -1007,6 +1516,34 @@ dialog form#add { padding: 0; display: block; }
           var existing = find(clean.id);
           if (existing) { Object.assign(existing, clean); updated++; } else { tasks.push(clean); added++; }
         });
+        var bAdded = 0;
+        if (!Array.isArray(parsed) && Array.isArray(parsed.birthdays)) {
+          parsed.birthdays.forEach(function (x) {
+            if (!x || typeof x.name !== "string" || !x.id) return;
+            var mo = Number(x.month), dy = Number(x.day), yr = Number(x.year);
+            if (!(mo >= 1 && mo <= 12 && dy >= 1 && dy <= new Date(2000, mo, 0).getDate())) return;
+            var cb = {
+              id: String(x.id), name: x.name.slice(0, 200), month: mo, day: dy,
+              year: yr >= 1900 && yr <= 2100 ? Math.floor(yr) : null,
+              doneFor: typeof x.doneFor === "string" && /^\d{4}-\d{2}-\d{2}$/.test(x.doneFor) ? x.doneFor : null,
+              createdAt: Number(x.createdAt) || Date.now()
+            };
+            var ex = findBday(cb.id);
+            if (ex) { Object.assign(ex, cb); updated++; } else { birthdays.push(cb); bAdded++; }
+          });
+          saveBirthdays();
+        }
+        if (!Array.isArray(parsed) && Array.isArray(parsed.periods)) {
+          var isoRe = /^\d{4}-\d{2}-\d{2}$/;
+          parsed.periods.forEach(function (x) {
+            if (!x || typeof x.name !== "string" || !x.id || !isoRe.test(x.from) || !isoRe.test(x.to) || x.to < x.from) return;
+            var cp = { id: String(x.id), name: x.name.slice(0, 200), from: x.from, to: x.to, kind: x.kind === "sonst" ? "sonst" : "urlaub", createdAt: Number(x.createdAt) || Date.now() };
+            var ex = findPer(cp.id);
+            if (ex) { Object.assign(ex, cp); updated++; } else { periods.push(cp); bAdded++; }
+          });
+          savePeriods();
+        }
+        added += bAdded;
         saveTasks();
         settings.lastBackupAt = settings.lastChangeAt; saveSettings(); // Stand = Datei
         render();
